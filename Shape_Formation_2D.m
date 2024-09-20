@@ -2,45 +2,43 @@ clear; clc; close all
 beep off
 
 
-random_range = [-1,1];
+random_range = [-2,2];
 kv = 1;
 
-p1 = [0;0;0];
-p2 = [2;0;-1];
-p3 = [1;-1.5;0];
-p4 = [1;1;1];
-initial_p = [p1, p2, p3, p4];
-
-p1d = [0;0;0];
-p2d = [1;0;0];
-p3d = [1/2;sqrt(3)/2;0];
-p4d = [1/2;sqrt(3)/6;sqrt(2/3)];
-pd = [p1d; p2d; p3d; p4d];
+% p1 = [0;0;0];
+% p2 = [2;0;-1];
+% p3 = [1;-1.5;0];
+% p4 = [1;1;1];
+% initial_p = [p1, p2, p3, p4];
+% 
+% p1d = [0;0;0];
+% p2d = [1;0;0];
+% p3d = [1/2;sqrt(3)/2;0];
+% p4d = [1/2;sqrt(3)/6;sqrt(2/3)];
+% pd = [p1d; p2d; p3d; p4d];
 
 % Desired Shape
-p1_des = [0;0;0];
-p2_des = [0;2;0];
-p3_des = [2;0;0];
-p4_des = [2;2;0];
-p5_des = [1;1;0];
-p6_des = [4;4;0];
+% Shape builds counter-clockwise
+q1_des = [0;0];
+q2_des = [2;0];
+q3_des = [2;2];
+q4_des = [0;2];
+q5_des = [1;1];
+q6_des = [1;3];
 
 
-desired_pos = [p1_des; p2_des; p3_des; p4_des;p5_des];
+desired_pos = [q1_des; q2_des; q3_des; q4_des;q5_des;q6_des];
+% desired_pos = [q1_des; q2_des; q3_des; q4_des];
 initial_pos = sum(abs(random_range))*rand(size(desired_pos)) + random_range(1)*ones(size(desired_pos));
 
-num_agents = length(desired_pos)/3;
-for i = 1:num_agents
-    initial_pos(3*i) = 0;
-end
 
+num_agents = length(desired_pos)/2;
 
 alpha = ones(num_agents,1);
-beta = ones(num_agents,1);
-gamma = ones(num_agents,1);
 
-[t, sol] = ode45(@(t,p) get_dp(t, p, desired_pos, alpha, beta, gamma), [0,15], initial_pos);
-plot_figures(sol)
+% u = dp
+[t, sol] = ode45(@(t,q) get_u(t, q, desired_pos, alpha), [0,15], initial_pos);
+plot_output(sol)
 plot_error(t,sol,desired_pos)
 
 % [t, sol] = ode45(@(t,p) get_dp(t, p, pd, alpha, beta, gamma),[0,15], initial_p);
@@ -49,97 +47,102 @@ plot_error(t,sol,desired_pos)
 
 
 
-function dp = get_dp(t, p, d, alpha, beta, gamma)
+function u = get_u(t, q, d, alpha)
 
-num_agents = length(p)/3;
+num_agents = length(q)/2;
+J = [0,1;-1,0];
 
-dp = zeros(3,1);
-p1 = p(1:3);
-p2 = p(4:6);
+u = zeros(2,1);
+q1 = q(1:2);
+q2 = q(3:4);
 
-d1 = d(1:3);
-d2 = d(4:6);
+d1 = d(1:2);
+d2 = d(3:4);
 
-sigma21 = norm(p2-p1)^2 - norm(d2-d1)^2;
-dp2 = -alpha(2)*(p2-p1)*sigma21;
-dp = [dp; dp2];
+sigma21 = norm(q2-q1)^2 - norm(d2-d1)^2;
+u2 = -alpha(2)*(q2-q1)*sigma21;
+u = [u; u2];
 
 for k = 3:num_agents
     j = k-1;
     i = k-2;
    
-    p_i = p(3*i-2:3*i);
-    p_j = p(3*j-2:3*j);
-    p_k = p(3*k-2:3*k);
+    qi = q(2*i-1:2*i);
+    qj = q(2*j-1:2*j);
+    qk = q(2*k-1:2*k);
     
-    d_i = d(3*i-2:3*i);
-    d_j = d(3*j-2:3*j);
-    d_k = d(3*k-2:3*k);
+    di = d(2*i-1:2*i);
+    dj = d(2*j-1:2*j);
+    dk = d(2*k-1:2*k);
 
-
-sigmakj = norm(p_k-p_j)^2 - norm(d_k-d_j)^2;
-
-lamba_k = (p_k-p_j)'*(p_j-p_i)/norm(p_j-p_i);
-psi_k = (p_k-p_j)'/norm(p_j-p_i)*((p_k-p_j)-(p_k-p_j)'*(p_j-p_i)/norm(p_j-p_i)*(p_j-p_i)/norm(p_j-p_i));
-
-lambda_kd = (d_k-d_j)'*(d_j-d_i)/norm(d_j-d_i);
-psi_kd = (d_k-d_j)'/norm(d_j-d_i)*((d_k-d_j)-(d_k-d_j)'*(d_j-d_i)/norm(d_j-d_i)*(d_j-d_i)/norm(d_j-d_i));
-
-dpk = - alpha(k)*(p_k-p_j)*sigmakj ...
-      - beta(k)*(lamba_k-lambda_kd)*(p_j-p_i)/norm(p_j-p_i) ...
-      - gamma(k)*(psi_k-psi_kd)*((p_k-p_j)-(p_k-p_j)'*(p_j-p_i)/norm(p_j-p_i)*(p_j-p_i)/norm(p_j-p_i))/norm(p_j-p_i);
-
-
-dp = [dp; dpk];
-end
+    sigmaki = norm(qk-qi)^2 - norm(dk-di)^2;
+    sigmakj = norm(qk-qj)^2 - norm(dk-dj)^2;
+    
+    uk = -alpha(k)*(J*(qk-qj)*sigmaki+J'*(qk-qi)*sigmakj);
+    u = [u; uk];
 
 end
+end
 
-function plot_figures(data)
-    num_agents = length(data(1,:))/3;
+function plot_output(data)
+    num_agents = length(data(1,:))/2;
     figure 
     hold on
     legend_list = [];
     for i = 1:num_agents
-        x = data(:,i*3-2);
-        y = data(:,i*3-1);
-        z = data(:,i*3);
+        x = data(:,i*2-1);
+        y = data(:,i*2);
         legend_list = [legend_list, "Agent: " + i];
-        plot3(x,y,z)
+        plot(x,y,LineWidth=2)
     end
 
     colors = get(gca,"ColorOrder");
     for i = 1:num_agents
-        x = data(end,i*3-2);
-        y = data(end,i*3-1);
-        z = data(end,i*3);
-        plot3(x,y,z,"*",Color=colors(i,:))
+        x0 = data(1,i*2-1);
+        y0 = data(1,i*2);
+        x_end = data(end,i*2-1);
+        y_end = data(end,i*2);
+        plot(x0,y0,"o",Color=colors(i,:),LineWidth=2)
+        plot(x_end,y_end,"x",Color=colors(i,:),LineWidth=2)
     end
     
-    legend(legend_list)
+    line12 = [data(end,1:2); data(end,3:4)];
+    plot(line12(:,1),line12(:,2),"k",LineWidth=1.5)
+
+    for i = 1:num_agents-2
+        j = i+1;
+        k = i+2;
+        vi = 2*i-1:2*i;
+        vj = 2*j-1:2*j;
+        vk = 2*k-1:2*k;
+        lineik = [data(end,vi);data(end,vk)];
+        linejk = [data(end,vj);data(end,vk)];
+        plot(lineik(:,1),lineik(:,2),"k",LineWidth=1.5)
+        plot(linejk(:,1),linejk(:,2),"k",LineWidth=1.5)
+    end
+
+    legend(legend_list,"Location", "best")
     xlabel('X')
     ylabel('Y')
-    zlabel('Z')
-    view(3)
     axis equal
     grid on    
 end
 
 function plot_error(t, x, xd)
-    num_agents = length(x(1,:))/3;
+    num_agents = length(x(1,:))/2;
     data_points = length(t);
     figure
     hold on
     couple_list = [];
-    error12 = vecnorm(x(:,1:3)-x(:,4:6),2,2) - norm(xd(1:3)-xd(4:6))*ones(data_points,1);
+    error12 = vecnorm(x(:,1:2)-x(:,3:4),2,2) - norm(xd(1:2)-xd(3:4))*ones(data_points,1);
     plot(t, error12)
     couple_list = [couple_list, "e_1_2"];
     for i = 1:num_agents-2
         j = i+1;
         k = i+2;
-        vi = 3*i-2:3*i;
-        vj = 3*j-2:3*j;
-        vk = 3*k-2:3*k;
+        vi = 2*i-1:2*i;
+        vj = 2*j-1:2*j;
+        vk = 2*k-1:2*k;
         % errorij = vecnorm(x(:,vi)-x(:,vj),2,2) - norm(xd(vi)-xd(vj))*ones(data_points,1);
         % couple_list = [couple_list,"e_" + i + "_" + j];
         % plot(t,errorij)
