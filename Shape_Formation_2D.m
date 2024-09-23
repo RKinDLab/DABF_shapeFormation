@@ -2,7 +2,7 @@ clear; clc; close all
 beep off
 
 
-random_range = [-2,2];
+random_range = [-.2,.2];
 kv = 1;
 
 % p1 = [0;0;0];
@@ -26,18 +26,25 @@ q4_des = [0;2];
 q5_des = [1;1];
 q6_des = [1;3];
 
+s = .30;
+pent1 = [s/2; 0];
+pent2 = [s/2*cos(2*pi/5); s/2*sin(2*pi/5)];
+pent3 = [s/2*cos(4*pi/5); s/2*sin(4*pi/5)];
+pent4 = [s/2*cos(6*pi/5); s/2*sin(6*pi/5)];
+pent5 = [s/2*cos(8*pi/5); s/2*sin(8*pi/5)];
 
-desired_pos = [q1_des; q2_des; q3_des; q4_des;q5_des;q6_des];
-% desired_pos = [q1_des; q2_des; q3_des; q4_des];
+% desired_pos = [q1_des, q2_des, q3_des, q4_des, q5_des, q6_des];
+% desired_pos = [q1_des, q2_des, q3_des, q4_des];
+desired_pos = [pent1, pent2, pent3, pent4, pent5];
 initial_pos = sum(abs(random_range))*rand(size(desired_pos)) + random_range(1)*ones(size(desired_pos));
 
 
-num_agents = length(desired_pos)/2;
+num_agents = max(size(initial_pos));
 
-alpha = ones(num_agents,1);
+alpha = 5*ones(num_agents,1);
 
 % u = dp
-[t, sol] = ode45(@(t,q) get_u(t, q, desired_pos, alpha), [0,15], initial_pos);
+[t, sol] = ode45(@(t,q) ode_solver(t, q, desired_pos, alpha), [0,30], initial_pos);
 plot_output(sol)
 plot_error(t,sol,desired_pos)
 
@@ -45,41 +52,45 @@ plot_error(t,sol,desired_pos)
 % plot_figures(sol)
 % plot_error(t,sol,pd)
 
-
-
-function u = get_u(t, q, d, alpha)
-
+function dq = ode_solver(t,q,d,alpha)
 num_agents = length(q)/2;
+q = reshape(q,2,num_agents);
+u = get_u(q,d,alpha);
+dq = reshape(u,num_agents*2,1);
+end
+
+function u = get_u(q, d, alpha)
+num_agents = length(q(1,:));
 J = [0,1;-1,0];
 
 u = zeros(2,1);
-q1 = q(1:2);
-q2 = q(3:4);
+q1 = q(:,1);
+q2 = q(:,2);
 
-d1 = d(1:2);
-d2 = d(3:4);
+d1 = d(:,1);
+d2 = d(:,2);
 
 sigma21 = norm(q2-q1)^2 - norm(d2-d1)^2;
 u2 = -alpha(2)*(q2-q1)*sigma21;
-u = [u; u2];
+u = [u, u2];
 
 for k = 3:num_agents
     j = k-1;
     i = k-2;
    
-    qi = q(2*i-1:2*i);
-    qj = q(2*j-1:2*j);
-    qk = q(2*k-1:2*k);
+    qi = q(:,i);
+    qj = q(:,j);
+    qk = q(:,k);
     
-    di = d(2*i-1:2*i);
-    dj = d(2*j-1:2*j);
-    dk = d(2*k-1:2*k);
+    di = d(:,i);
+    dj = d(:,j);
+    dk = d(:,k);
 
     sigmaki = norm(qk-qi)^2 - norm(dk-di)^2;
     sigmakj = norm(qk-qj)^2 - norm(dk-dj)^2;
     
-    uk = -alpha(k)*(J*(qk-qj)*sigmaki+J'*(qk-qi)*sigmakj);
-    u = [u; uk];
+    uk = -alpha(k)*((qk-qi)*sigmaki+J*(qk-qi)*sigmakj);
+    u = [u, uk];
 
 end
 end
