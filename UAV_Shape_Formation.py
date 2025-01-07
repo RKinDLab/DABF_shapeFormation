@@ -1,8 +1,4 @@
 import numpy as np
-import scipy as sp
-import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
-
 
 class ShapeFormationController():
     def __init__(self, alphas:np.ndarray):
