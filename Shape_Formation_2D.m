@@ -52,7 +52,7 @@ plot_error(t,sol,desired_pos)
 % plot_figures(sol)
 % plot_error(t,sol,pd)
 
-function dq = ode_solver(t,q,d,alpha)
+function dq = ode_solver(~,q,d,alpha)
 num_agents = length(q)/2;
 q = reshape(q,2,num_agents);
 u = get_u(q,d,alpha);

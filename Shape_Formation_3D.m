@@ -45,7 +45,7 @@ plot_error(t,sol,desired_pos)
 
 
 
-function dp = get_dp(t, p, d, alpha, beta, gamma)
+function dp = get_dp(~, p, d, alpha, beta, gamma)
 
 num_agents = length(p)/3;
 

@@ -1,2 +1,7 @@
-*.asv
-__pycache__/
+*.jpg
+Pent.m
+plotter.m
+Shape_Formation_DBF.m
+Shape_Formation.m
+thales.m
+
