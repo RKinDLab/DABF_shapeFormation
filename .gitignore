@@ -1,12 +1,10 @@
 *.jpg
 Pent.m
-plotter.m
+
 Shape_Formation_DBF.m
 Shape_Formation.m
 thales.m
 
-run_simulation_2D.m
-init.m
 
   
 

@@ -1,9 +1,7 @@
-clear; clc; close all
-beep off
 
 
-random_range = [-.2,.2];
-kv = 1;
+%random_range = [-.2,.2];
+%kv = 1;
 
 % p1 = [0;0;0];
 % p2 = [2;0;-1];
@@ -35,30 +33,41 @@ pent5 = [s/2*cos(8*pi/5); s/2*sin(8*pi/5)];
 
 % desired_pos = [q1_des, q2_des, q3_des, q4_des, q5_des, q6_des];
 % desired_pos = [q1_des, q2_des, q3_des, q4_des];
-desired_pos = [pent1, pent2, pent3, pent4, pent5];
-initial_pos = sum(abs(random_range))*rand(size(desired_pos)) + random_range(1)*ones(size(desired_pos));
+% desired_pos = [pent1, pent2, pent3, pent4, pent5];
+% initial_pos = sum(abs(random_range))*rand(size(desired_pos)) + random_range(1)*ones(size(desired_pos));
 
 
-num_agents = max(size(initial_pos));
+% num_agents = max(size(initial_pos));
 
-alpha = 5*ones(num_agents,1);
+% alpha = 5*ones(num_agents,1);
 
 % u = dp
-[t, sol] = ode45(@(t,q) ode_solver(t, q, desired_pos, alpha), [0,30], initial_pos);
-plot_output(sol)
-plot_error(t,sol,desired_pos)
+[t, sol] = ode45(@(t,q) ode_solver_DABF(t, q, desired_pos, alpha), [0,60], initial_pos);
+%plot_output(sol)
+%plot_error(t,sol,desired_pos)
 
 % [t, sol] = ode45(@(t,p) get_dp(t, p, pd, alpha, beta, gamma),[0,15], initial_p);
 % plot_figures(sol)
 % plot_error(t,sol,pd)
 
-function dq = ode_solver(~,q,d,alpha)
-num_agents = length(q)/2;
-q = reshape(q,2,num_agents);
-u = get_u(q,d,alpha);
-dq = reshape(u,num_agents*2,1);
+
+[t_trad, sol_trad] = ode45(@(t,q) ode_solver_DBF(t, q, desired_pos, alpha), [0,60], initial_pos);
+
+
+function dq = ode_solver_DBF(~,q,d,alpha)%Distance-Based Formation
+    num_agents = length(q)/2;
+    q = reshape(q,2,num_agents);
+    u = get_u_DBF(q,d,alpha);
+    dq = reshape(u,num_agents*2,1);
 end
 
+function dq = ode_solver_DABF(~,q,d,alpha)%Distance-Aware Bearing Formation
+    num_agents = length(q)/2;
+    q = reshape(q,2,num_agents);
+    u = get_u_DABF(q,d,alpha);
+    dq = reshape(u,num_agents*2,1);
+end
+%{
 function u = get_u(q, d, alpha)
 num_agents = length(q(1,:));
 J = [0,1;-1,0];
@@ -166,3 +175,5 @@ function plot_error(t, x, xd)
     end 
     legend(couple_list)
 end
+%}
+

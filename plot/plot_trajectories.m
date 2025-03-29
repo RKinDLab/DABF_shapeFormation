@@ -34,7 +34,7 @@ function plot_trajectories(data)
         plot(x_end,y_end,"o",Color=colors(i,:),LineWidth=3,MarkerSize=18)
     end
     
-    legend(legend_list,"Location","Northeast Outside")
+    legend(legend_list,"Location","Northeast","Interpreter","latex")
     xlabel('X [m]')
     ylabel('Y [m]')
     % Set font size and bold for all text objects
@@ -44,9 +44,47 @@ function plot_trajectories(data)
     axis equal
     grid on
     box on
-    xlim([-0.1 0.4])
-    ylim([-0.15 0.35])
+
+    % Extract x and y values
+    x_values = data(:, 1:2:end); % Extract columns for x (odd columns)
+    y_values = data(:, 2:2:end); % Extract columns for y (even columns)
+
+    % Find the min and max values of x and y
+    x_min = min(x_values(:));
+    x_max = max(x_values(:));
+    y_min = min(y_values(:));
+    y_max = max(y_values(:));
+
+    % Find the range for both x and y
+    range_x = x_max - x_min;
+    range_y = y_max - y_min;
+
+    % Determine the maximum range to ensure square plot
+    max_range = max(range_x, range_y);
+
+    % Calculate the center of the x and y values
+    center_x = (x_min + x_max) / 2;
+    center_y = (y_min + y_max) / 2;
+
+    % Set the axis limits to ensure square aspect ratio
+    xlim([center_x - max_range / 2-0.05, center_x + max_range / 2+0.05]);
+    ylim([center_y - max_range / 2-0.05, center_y + max_range / 2+0.05]);% Define the step for ticks as a multiple of 0.1
+    
+    % Define the step for ticks as a multiple of 0.1
+    tick_step = 0.1;
+
+    % Adjust xticks and yticks based on the square plot range, ensuring ticks are a multiple of 0.1
+    xticks_value = center_x - max_range / 2:tick_step:center_x + max_range / 2;
+    yticks_value = center_y - max_range / 2:tick_step:center_y + max_range / 2;
+
+    % Ensure that the tick values are multiples of 0.1
+    xticks_value = round(xticks_value / tick_step) * tick_step;
+    yticks_value = round(yticks_value / tick_step) * tick_step;
+
+    % Apply the ticks to the plot
+    xticks(xticks_value);
+    yticks(yticks_value);
     % xtickformat('%.0f');
     % ytickformat('%.0f');
-    
+        
 end
