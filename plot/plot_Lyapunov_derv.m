@@ -6,7 +6,7 @@ function plot_Lyapunov_derv
     set(allChildren, 'FontSize', 14, 'FontWeight', 'bold');  % Set font size and weight
     set(gca, 'FontSize', 14, 'FontWeight', 'bold');  % Set axes font size and weight
     grid on
-    ylabel('Time Derivative of Lyapunov Function')
+    ylabel({'Time Derivative of','Lyapunov Function'})
     xlabel('Time [sec]')
     axis square
     xlim([0 t(end)])
