@@ -17,19 +17,19 @@
 
 % Desired Shape
 % Shape builds counter-clockwise
-q1_des = [0;0];
-q2_des = [2;0];
-q3_des = [2;2];
-q4_des = [0;2];
-q5_des = [1;1];
-q6_des = [1;3];
+% q1_des = [0;0];
+% q2_des = [2;0];
+% q3_des = [2;2];
+% q4_des = [0;2];
+% q5_des = [1;1];
+% q6_des = [1;3];
 
-s = .30;
-pent1 = [s/2; 0];
-pent2 = [s/2*cos(2*pi/5); s/2*sin(2*pi/5)];
-pent3 = [s/2*cos(4*pi/5); s/2*sin(4*pi/5)];
-pent4 = [s/2*cos(6*pi/5); s/2*sin(6*pi/5)];
-pent5 = [s/2*cos(8*pi/5); s/2*sin(8*pi/5)];
+% s = .30;
+% pent1 = [s/2; 0];
+% pent2 = [s/2*cos(2*pi/5); s/2*sin(2*pi/5)];
+% pent3 = [s/2*cos(4*pi/5); s/2*sin(4*pi/5)];
+% pent4 = [s/2*cos(6*pi/5); s/2*sin(6*pi/5)];
+% pent5 = [s/2*cos(8*pi/5); s/2*sin(8*pi/5)];
 
 % desired_pos = [q1_des, q2_des, q3_des, q4_des, q5_des, q6_des];
 % desired_pos = [q1_des, q2_des, q3_des, q4_des];

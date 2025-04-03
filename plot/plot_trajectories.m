@@ -11,6 +11,8 @@ function plot_trajectories(data)
         plot(x,y,LineWidth=3)
     end
     colors = get(gca,"ColorOrder");
+    num_colors = 7; % Number of default MATLAB colors
+
     line12 = [data(end,1:2); data(end,3:4)];
     plot(line12(:,1),line12(:,2),"k",LineWidth=4)
     
@@ -30,8 +32,10 @@ function plot_trajectories(data)
         y0 = data(1,i*2);
         x_end = data(end,i*2-1);
         y_end = data(end,i*2);
-        plot(x0,y0,"x",Color=colors(i,:),LineWidth=3,MarkerSize=16)
-        plot(x_end,y_end,"o",Color=colors(i,:),LineWidth=3,MarkerSize=18)
+
+        current_color = colors(mod(i,num_colors-1) + 1,:);
+        plot(x0,y0,"x",Color=current_color,LineWidth=3,MarkerSize=16)
+        plot(x_end,y_end,"o",Color=current_color,LineWidth=3,MarkerSize=18)
     end
     
     legend(legend_list,"Location","Northeast","Interpreter","latex")

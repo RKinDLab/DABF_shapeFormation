@@ -22,7 +22,7 @@ xlabel('Time [sec]')
 
 
 nexttile
-plot_Lyapunov_derv()
+plot_Lyapunov_derv(t_trad, sol_trad, desired_pos)
 
 
 %% Distance Aware Bearing Controller
@@ -53,7 +53,7 @@ xlabel('Time [sec]')
 % 
 % % subplot(3,2,6);
 nexttile
-plot_Lyapunov_derv()
+plot_Lyapunov_derv(t, sol, desired_pos)
 %% add lyapunov time derivative 
 
 
