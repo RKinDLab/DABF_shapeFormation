@@ -33,12 +33,12 @@ function plot_trajectories(data)
         x_end = data(end,i*2-1);
         y_end = data(end,i*2);
 
-        current_color = colors(mod(i,num_colors-1) + 1,:);
+        current_color = colors(mod(i-1,num_colors) + 1,:);
         plot(x0,y0,"x",Color=current_color,LineWidth=3,MarkerSize=16)
         plot(x_end,y_end,"o",Color=current_color,LineWidth=3,MarkerSize=18)
     end
     
-    legend(legend_list,"Location","Northeast","Interpreter","latex")
+    legend(legend_list,"Location","Northeastoutside","Interpreter","latex")
     xlabel('X [m]')
     ylabel('Y [m]')
     % Set font size and bold for all text objects
