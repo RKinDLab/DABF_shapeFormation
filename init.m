@@ -4,7 +4,7 @@ addpath(fullfile(pwd, 'plot'));
 
 % setup desired framework
 radius = 0.3/2;
-num_agents = 12;
+num_agents = 10;
 desired_pos = desiredShapeCoordinate(num_agents,radius);
 
 % Set seed for reproducable results
