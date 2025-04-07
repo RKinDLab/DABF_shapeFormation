@@ -38,7 +38,7 @@ function plot_trajectories(data)
         plot(x_end,y_end,"o",Color=current_color,LineWidth=3,MarkerSize=18)
     end
     
-    legend(legend_list,"Location","Northeastoutside","Interpreter","latex")
+    legend(legend_list,"Location","Northeast","Interpreter","latex")
     xlabel('X [m]')
     ylabel('Y [m]')
     % Set font size and bold for all text objects
