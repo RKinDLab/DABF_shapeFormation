@@ -29,7 +29,6 @@ function u = get_u_DABF(q, d, alpha)
         sigmakj = norm(qk-qj)^2 - norm(dk-dj)^2;
     
         uk = -alpha(k)*(J*(qk-qj)*sigmaki+J'*(qk-qi)*sigmakj);%DABF
-        %uk = -alpha(k)*((qk-qi)*sigmaki+(qk-qj)*sigmakj);%DBF
     
         u = [u, uk];
     
